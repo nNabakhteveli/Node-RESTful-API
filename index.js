@@ -1,9 +1,41 @@
 const http = require("http"); 
+const https = require("https");
 const url = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
+const config = require("./config");
+const fs = require('fs');
 
 
-const server = http.createServer((req, res) => {
+// console.log(process.env.NODE_ENV);
+
+const httpServer = http.createServer((req, res) => {
+   unifiedServer(req, res);
+});
+
+
+httpServer.listen(config.httpPort, () => {
+   console.log(`The server is listening on port ${config.httpPort}`);
+});
+
+// Instantiate the https server
+
+const httpsServerOptions = {
+   'key': fs.readFileSync('./certs/key.pem'),
+   'cert': fs.readFileSync('./certs/cert.pem')
+};
+
+const httpsServer = https.createServer(httpsServerOptions, (req, res) => {
+   unifiedServer(req, res);
+})
+
+// Start the https server
+
+httpsServer.listen(config.httpsPort, () => {
+   console.log(`The server is listening on port ${config.httpsPort}`);
+});
+
+
+const unifiedServer = (req, res) => {
    // Get the URL and parse it 
    const parsedUrl = url.parse(req.url, true);
 
@@ -53,32 +85,27 @@ const server = http.createServer((req, res) => {
 
          // Return the response
 
+         res.setHeader("Content-Type", 'application/json');
          res.writeHead(statusCode);
          res.end(payloadString);
          console.log(`Returning this response: ${statusCode}`, payloadString);
       });
-   }); 
-});
-
-
-server.listen(3000, () => {
-   console.log("The server is listening on http://localhost:3000");
-});
+   });
+}
 
 // Request router
+const handlers = {
+   ping: (data, callback) => {
+      console.log("Hello from ping")
+      callback(200);
+   },
 
-const handlers = {};
-
-handlers.sample = (data, callback) => {
-   // Callback a http status code and a payload object
-
-   callback(406, {"name": 'sample handler'})
-} 
-
-handlers.notFound = (data, callback) => {
-   callback(404);
+   notFound: (data, callback) => {
+      console.log("Hello from not found")
+      callback(404);
+   }
 };
 
 const router = {
-   'sample': handlers.sample,
+   'ping': handlers.ping
 }

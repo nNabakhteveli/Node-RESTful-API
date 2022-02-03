@@ -4,9 +4,15 @@ const url = require("url");
 const StringDecoder = require("string_decoder").StringDecoder;
 const config = require("./config");
 const fs = require('fs');
+const _data = require("./lib/data");
 
 
-// console.log(process.env.NODE_ENV);
+// Testing
+// @TODO delete this
+_data.delete('test', 'newFile', (error) => {
+   if(error) throw error
+})
+
 
 const httpServer = http.createServer((req, res) => {
    unifiedServer(req, res);
@@ -97,7 +103,7 @@ const unifiedServer = (req, res) => {
 const handlers = {
    ping: (data, callback) => {
       console.log("Hello from ping")
-      callback(200);
+      callback(200);x``
    },
 
    notFound: (data, callback) => {

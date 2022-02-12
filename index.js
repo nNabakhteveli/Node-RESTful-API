@@ -5,7 +5,7 @@ const StringDecoder = require("string_decoder").StringDecoder;
 const config = require("./lib/config");
 const fs = require('fs');
 const _data = require("./lib/data");
-const handlers = require("./lib/handlers");
+const handlers = require("./lib/handlers/handlers");
 const helpers = require("./lib/helpers");
 
 
@@ -98,5 +98,6 @@ const unifiedServer = (req, res) => {
 const router = {
    'ping': handlers.ping,
    'users': handlers.users,
-   'tokens': handlers.tokens
+   'tokens': handlers.tokens,
+   'checks': handlers.checks
 }
